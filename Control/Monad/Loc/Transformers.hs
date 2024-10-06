@@ -7,9 +7,9 @@
 module Control.Monad.Loc.Transformers where
 
 import Control.Monad.Loc
-
-import Control.Monad.Trans.Error
-import Control.Monad.Trans.List
+import Control.Exception
+import Control.Monad.Trans.Except
+-- import Control.Monad.Trans.List
 import Control.Monad.Trans.Reader
 import Control.Monad.Trans.State.Lazy     as Lazy
 import Control.Monad.Trans.State.Strict   as Strict
@@ -19,11 +19,11 @@ import Control.Monad.Trans.RWS.Lazy       as Lazy
 import Control.Monad.Trans.RWS.Strict     as Strict
 import Data.Monoid
 
-instance MonadLoc m => MonadLoc (ListT m) where
-  withLoc l = ListT . withLoc l . runListT
+-- instance MonadLoc m => MonadLoc (ListT m) where
+--   withLoc l = ListT . withLoc l . runListT
 
-instance (Error e, MonadLoc m) => MonadLoc (ErrorT e m) where
-  withLoc l = ErrorT . withLoc l . runErrorT
+instance (Exception e, MonadLoc m) => MonadLoc (ExceptT e m) where
+  withLoc l = ExceptT . withLoc l . runExceptT
 
 instance MonadLoc m => MonadLoc (ReaderT r m) where
   withLoc l m = ReaderT $ \r -> withLoc l $ runReaderT m r
